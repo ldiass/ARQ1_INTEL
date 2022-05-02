@@ -1,7 +1,7 @@
 
 ;
 ;====================================================================
-;	- Trabalho de Programação 3
+;	- Trabalho de ProgramaÃ§Ã£o 3
 ;====================================================================
 ;
 	.model		small
@@ -96,7 +96,7 @@ Continua3:
 	jb		Continua4
 	cmp		dl,'z'
 	ja		Continua4
-	sub		dl,20h		
+	call		atoi
 Continua4:
 
 	;	if ( setChar(FileHandleDst, DL) == 0) continue;
@@ -169,7 +169,7 @@ GetFileNameDst	proc	near
 GetFileNameDst	endp
 
 ;--------------------------------------------------------------------
-;Função	Abre o arquivo cujo nome está no string apontado por DX
+;FunÃ§Ã£o	Abre o arquivo cujo nome estÃ¡ no string apontado por DX
 ;		boolean fopen(char *FileName -> DX)
 ;Entra: DX -> ponteiro para o string com o nome do arquivo
 ;Sai:   BX -> handle do arquivo
@@ -184,7 +184,7 @@ fopen	proc	near
 fopen	endp
 
 ;--------------------------------------------------------------------
-;Função Cria o arquivo cujo nome está no string apontado por DX
+;FunÃ§Ã£o Cria o arquivo cujo nome estÃ¡ no string apontado por DX
 ;		boolean fcreate(char *FileName -> DX)
 ;Sai:   BX -> handle do arquivo
 ;       CF -> 0, se OK
@@ -208,7 +208,7 @@ fclose	proc	near
 fclose	endp
 
 ;--------------------------------------------------------------------
-;Função	Le um caractere do arquivo identificado pelo HANLDE BX
+;FunÃ§Ã£o	Le um caractere do arquivo identificado pelo HANLDE BX
 ;		getChar(handle->BX)
 ;Entra: BX -> file handle
 ;Sai:   dl -> caractere
@@ -247,7 +247,7 @@ setChar	endp
 gets	proc	near
 	push	bx
 
-	mov		ah,0ah						; Lê uma linha do teclado
+	mov		ah,0ah						; LÃª uma linha do teclado
 	lea		dx,String
 	mov		byte ptr String, MAXSTRING-4	; 2 caracteres no inicio e um eventual CR LF no final
 	int		21h
@@ -265,12 +265,12 @@ gets	proc	near
 gets	endp
 
 ;====================================================================
-; A partir daqui, estão as funções já desenvolvidas
+; A partir daqui, estÃ£o as funÃ§Ãµes jÃ¡ desenvolvidas
 ;	1) printf_s
 ;====================================================================
 	
 ;--------------------------------------------------------------------
-;Função Escrever um string na tela
+;FunÃ§Ã£o Escrever um string na tela
 ;		printf_s(char *s -> BX)
 ;--------------------------------------------------------------------
 printf_s	proc	near
@@ -296,7 +296,7 @@ printf_s	endp
 
 ;
 ;--------------------------------------------------------------------
-;Função:Converte um ASCII-DECIMAL para HEXA
+;FunÃ§Ã£o:Converte um ASCII-DECIMAL para HEXA
 ;Entra: (S) -> Caracter em dl
 ;Sai:	(A) -> dl -> Valor "Hex" resultante
 ;Algoritmo:
