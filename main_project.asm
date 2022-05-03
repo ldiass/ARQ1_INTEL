@@ -9,7 +9,7 @@
 		
 CR		equ		0dh
 LF		equ		0ah
-UN		equ		F0h
+UN		equ		240d
 LN		equ		0Fh
 
 
@@ -106,21 +106,20 @@ Continua3:
 	SHR		dl,1
 	SHR		dl,1
 	SHR		dl,1
-	cmp		dl,9h	;Checa se o nibble eh 0-9
-	ja		Continua3_1
-	add		dl, 30h	;Soma 30h p pegar o codigo ascii correspondente
+	cmp		dl,10d	;Checa se o nibble eh A-F
+	jb		Continua3_1
+	add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua3_1:
-	add		dl, 37h	;Se for um numero de Ah a Fh, soma 37
+	add		dl, 30h	;Se for um numero de 0-9, soma so 30
 	mov		bx,FileHandleDst
 	call	setChar
 	mov		dl, char_aux ;Insere novamente td o valor em dl
 	and		dl, LN	;Limpa o upper nibble
-	cmp		dl,9h	;Checa se o nibble eh 0-9
-	ja		Continua3_2
-	add		dl, 30h	;Soma 30h p pegar o codigo ascii correspondente
+	cmp		dl, 10d	;Checa se o nibble eh A-F
+	jb		Continua3_2
+	add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua3_2:
-	add		dl, 37h	;Se for um numero de Ah a Fh, soma 37
-	mov		dl, char_aux ;Insere novamente td o valor em dl
+	add		dl, 30h	;Se for um numero de 0-9, soma so 30
 Continua4:
 
 	;	if ( setChar(FileHandleDst, DL) == 0) continue;
