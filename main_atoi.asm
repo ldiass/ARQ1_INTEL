@@ -24,8 +24,6 @@ MsgErroCreateFile	db	"Erro na criacao do arquivo.", CR, LF, 0
 MsgErroReadFile		db	"Erro na leitura do arquivo.", CR, LF, 0
 MsgErroWriteFile	db	"Erro na escrita do arquivo.", CR, LF, 0
 MsgCRLF				db	CR, LF, 0
-char_aux		db	0	;caracter menos significativo
-
 
 MAXSTRING	equ		200
 String	db		MAXSTRING dup (?)		; Usado na funcao gets
@@ -93,13 +91,13 @@ Continua3:
 	cmp		ax,0
 	jz		TerminouArquivo
 	
-	cmp		dl,20h
+	;	dl = toUpper(dl)
+	cmp		dl,'0'
 	jb		Continua4
-	cmp		dl,7Eh
+	cmp		dl,'z'
 	ja		Continua4
-	mov		ax, dx
-	call		hexToAsc
-	mov		dl,al
+	add		dl,48 ;Add 30h que eh `0` em ascii
+	call		atoi
 Continua4:
 
 	;	if ( setChar(FileHandleDst, DL) == 0) continue;
@@ -294,40 +292,58 @@ ps_1:
 printf_s	endp
 
 ;--------------------------------------------------------------------
-;Função p converter hex p ascii 
-;https://4beginner.com/8086-program-to-convert-hexadecimal-to-ascii
-;Recebe hex em ax e retorna em ax
+;		end
 ;--------------------------------------------------------------------
 
+;
+;--------------------------------------------------------------------
+;Função:Converte um ASCII-DECIMAL para HEXA
+;Entra: (S) -> Caracter em dl
+;Sai:	(A) -> dl -> Valor "Hex" resultante
+;Algoritmo:
+;	A = 0;
+;	while (*S!='\0') {
+;		A = 10 * A + (*S - '0')
+;		++S;
+;	}
+;	return
+;--------------------------------------------------------------------
+atoi	proc near
 
-hexToAsc proc near        ;AX input , si point result storage addres
-        mov cx,00h
-        mov bx,0ah
-        hexloop1:
-                mov dx,0
-                div bx
-                add dl,'0'
-                push dx
-                inc cx
-                cmp ax,0ah
-                jge hexloop1
-                add al,'0'
-                mov [si],al
-        hexloop2:
-                pop ax
-                inc si
-                mov [si],al
-                loop hexloop2
-        inc si
-        mov [si],ax
-        ret
-hexToAsc endp 
+		; A = 0;
+		mov		ax,0
+		
+atoi_2:
+		; while (*S!='\0') {
+		cmp		dl, 0
+		jz		atoi_1
 
+		; 	A = 10 * A
+		mov		cx,10
+		mul		cx
+
+		; 	A = A + *S
+		mov		ch,0
+		mov		cl,dl
+		add		ax,cx
+
+		; 	A = A - '0'
+		sub		ax,'0'
+	
+		;}
+		jmp		atoi_2
+
+atoi_1:
+		mov		dl,ah
+		;mov dl,'A' Hardcoded for test
+		; return
+		ret
+
+atoi	endp
 
 ;--------------------------------------------------------------------
 		end
 ;--------------------------------------------------------------------
-
 
 	
 
