@@ -9,6 +9,9 @@
 		
 CR		equ		0dh
 LF		equ		0ah
+UN		equ		F0h
+LN		equ		0Fh
+
 
 	.data
 FileNameSrc		db		256 dup (?)		; Nome do arquivo a ser lido
@@ -93,19 +96,37 @@ Continua3:
 	cmp		ax,0
 	jz		TerminouArquivo
 	
-	cmp		dl,20h
+	cmp		dl,20h	;Checa se eh caracter visivel
 	jb		Continua4
 	cmp		dl,7Eh
 	ja		Continua4
-	mov		ax, dx
-	call		hexToAsc
-	mov		dl,al
+	mov		char_aux, dl
+	and		dl, UN	;Colocar o upper nibble em baixo
+	SHR		dl,1
+	SHR		dl,1
+	SHR		dl,1
+	SHR		dl,1
+	cmp		dl,9h	;Checa se o nibble eh 0-9
+	ja		Continua3_1
+	add		dl, 30h	;Soma 30h p pegar o codigo ascii correspondente
+Continua3_1:
+	add		dl, 37h	;Se for um numero de Ah a Fh, soma 37
+	mov		bx,FileHandleDst
+	call	setChar
+	mov		dl, char_aux ;Insere novamente td o valor em dl
+	and		dl, LN	;Limpa o upper nibble
+	cmp		dl,9h	;Checa se o nibble eh 0-9
+	ja		Continua3_2
+	add		dl, 30h	;Soma 30h p pegar o codigo ascii correspondente
+Continua3_2:
+	add		dl, 37h	;Se for um numero de Ah a Fh, soma 37
+	mov		dl, char_aux ;Insere novamente td o valor em dl
 Continua4:
 
 	;	if ( setChar(FileHandleDst, DL) == 0) continue;
 	mov		bx,FileHandleDst
 	call	setChar
-	jnc		Continua2
+	jnc		Continua2	
 
 	;	printf ("Erro na escrita....;)")
 	;	fclose(FileHandleSrc)
@@ -292,36 +313,6 @@ printf_s	proc	near
 ps_1:
 	ret
 printf_s	endp
-
-;--------------------------------------------------------------------
-;Função p converter hex p ascii 
-;https://4beginner.com/8086-program-to-convert-hexadecimal-to-ascii
-;Recebe hex em ax e retorna em ax
-;--------------------------------------------------------------------
-
-
-hexToAsc proc near        ;AX input , si point result storage addres
-        mov cx,00h
-        mov bx,0ah
-        hexloop1:
-                mov dx,0
-                div bx
-                add dl,'0'
-                push dx
-                inc cx
-                cmp ax,0ah
-                jge hexloop1
-                add al,'0'
-                mov [si],al
-        hexloop2:
-                pop ax
-                inc si
-                mov [si],al
-                loop hexloop2
-        inc si
-        mov [si],ax
-        ret
-hexToAsc endp 
 
 
 ;--------------------------------------------------------------------
