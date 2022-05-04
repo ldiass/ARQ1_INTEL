@@ -160,6 +160,8 @@ Continua4_2:
 	add	col2, dl	;Adiciona esse valor no somatorio da coluna 2
 	jmp	Continua5
 Continua4_3:
+	cmp	conta_4,01d	;Se for o caracter multiplo de 4...
+	jnz	Continua5	
 	mov	dl, char_aux
 	add	col1, dl	;Adiciona esse valor no somatorio da coluna 1
 Continua5:
@@ -182,12 +184,6 @@ Continua5:
 	;} while(1);
 		
 TerminouArquivo:
-	mov	dl,0Dh
-	mov	bx,FileHandleDst	
-	call	setChar		;Coloca CR no arquivo
-	mov	dl,0Ah
-	mov	bx,FileHandleDst
-	call	setChar		;Coloca LF no arquivo
 	mov 	dl, col1
 	mov	bx,FileHandleDst
 	call	setChar
