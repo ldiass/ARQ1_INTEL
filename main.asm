@@ -184,18 +184,112 @@ Continua5:
 	;} while(1);
 		
 TerminouArquivo:
+	mov	dl,0Dh
+	mov	bx,FileHandleDst	
+	call	setChar		;Coloca CR no arquivo
+	mov	dl,0Ah
+	mov	bx,FileHandleDst
+	call	setChar		;Coloca LF no arquivo
+
 	mov 	dl, col1
-	mov	bx,FileHandleDst
-	call	setChar
+		and		dl, UN	;Colocar o upper nibble em baixo
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		cmp		dl,10d	;Checa se o nibble eh A-F
+		jb		Continua6_1
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_1:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		bx,FileHandleDst
+		call		setChar
+		mov		dl, col1;Insere novamente td o valor em dl
+		and		dl, LN	;Limpa o upper nibble
+		cmp		dl, 10d	;Checa se o nibble eh A-F
+		jb		Continua6_2
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_2:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		;	if ( setChar(FileHandleDst, DL) == 0) continue;
+		mov		bx,FileHandleDst
+		call	setChar
+
 	mov 	dl, col2
-	mov	bx,FileHandleDst
-	call	setChar
+		and		dl, UN	;Colocar o upper nibble em baixo
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		cmp		dl,10d	;Checa se o nibble eh A-F
+		jb		Continua6_3
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_3:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		bx,FileHandleDst
+		call		setChar
+		mov		dl, col2;Insere novamente td o valor em dl
+		and		dl, LN	;Limpa o upper nibble
+		cmp		dl, 10d	;Checa se o nibble eh A-F
+		jb		Continua6_4
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_4:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		;	if ( setChar(FileHandleDst, DL) == 0) continue;
+		mov		bx,FileHandleDst
+		call	setChar
+
 	mov 	dl, col3
-	mov	bx,FileHandleDst
-	call	setChar
+		and		dl, UN	;Colocar o upper nibble em baixo
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		cmp		dl,10d	;Checa se o nibble eh A-F
+		jb		Continua6_5
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_5:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		bx,FileHandleDst
+		call		setChar
+		mov		dl, col3;Insere novamente td o valor em dl
+		and		dl, LN	;Limpa o upper nibble
+		cmp		dl, 10d	;Checa se o nibble eh A-F
+		jb		Continua6_6
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_6:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		;	if ( setChar(FileHandleDst, DL) == 0) continue;
+		mov		bx,FileHandleDst
+		call	setChar
+
+
 	mov 	dl, col4
-	mov	bx,FileHandleDst
-	call	setChar
+		and		dl, UN	;Colocar o upper nibble em baixo
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		SHR		dl,1
+		cmp		dl,10d	;Checa se o nibble eh A-F
+		jb		Continua6_7
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_7:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		bx,FileHandleDst
+		call		setChar
+		mov		dl, col4;Insere novamente td o valor em dl
+		and		dl, LN	;Limpa o upper nibble
+		cmp		dl, 10d	;Checa se o nibble eh A-F
+		jb		Continua6_8
+		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
+Continua6_8:
+		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		;	if ( setChar(FileHandleDst, DL) == 0) continue;
+		mov		bx,FileHandleDst
+		call	setChar
+
+
+
 	;fclose(FileHandleSrc)
 	;fclose(FileHandleDst)
 	;exit(0)
