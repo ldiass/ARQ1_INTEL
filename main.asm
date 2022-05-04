@@ -137,15 +137,31 @@ Continua4:
 	mov	flags_aux, AH	;Coloca as flags do setChar em flags_aux
 	inc	conta_4
 	cmp	conta_4,04d	;Se for o caracter multiplo de 4...
-	jnz	Continua5	
-	mov	conta_4,0d	;Zera o contado
+	jnz	Continua4_1	
+	mov	conta_4,0d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
 	call	setChar		;Coloca CR no arquivo
 	mov	dl,0Ah
 	mov	bx,FileHandleDst
 	call	setChar		;Coloca LF no arquivo
-	add	col4, char_aux	;Adiciona esse valor no somatorio da coluna 4
+	mov	dl, char_aux
+	add	col4, dl	;Adiciona esse valor no somatorio da coluna 4
+Continua4_1:
+	cmp	conta_4,03d	;Se for o caracter multiplo de 4...
+	jnz	Continua4_2	
+	mov	dl, char_aux
+	add	col3, dl	;Adiciona esse valor no somatorio da coluna 6
+	jmp	Continua5
+Continua4_2:
+	cmp	conta_4,02d	;Se for o caracter multiplo de 4...
+	jnz	Continua4_3	
+	mov	dl, char_aux
+	add	col2, dl	;Adiciona esse valor no somatorio da coluna 2
+	jmp	Continua5
+Continua4_3:
+	mov	dl, char_aux
+	add	col1, dl	;Adiciona esse valor no somatorio da coluna 1
 Continua5:
 	mov	AH, flags_aux
 	sahf
@@ -166,6 +182,24 @@ Continua5:
 	;} while(1);
 		
 TerminouArquivo:
+	mov	dl,0Dh
+	mov	bx,FileHandleDst	
+	call	setChar		;Coloca CR no arquivo
+	mov	dl,0Ah
+	mov	bx,FileHandleDst
+	call	setChar		;Coloca LF no arquivo
+	mov 	dl, col1
+	mov	bx,FileHandleDst
+	call	setChar
+	mov 	dl, col2
+	mov	bx,FileHandleDst
+	call	setChar
+	mov 	dl, col3
+	mov	bx,FileHandleDst
+	call	setChar
+	mov 	dl, col4
+	mov	bx,FileHandleDst
+	call	setChar
 	;fclose(FileHandleSrc)
 	;fclose(FileHandleDst)
 	;exit(0)
