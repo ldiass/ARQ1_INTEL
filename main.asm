@@ -148,27 +148,27 @@ Continua4:
 	call	setChar		;Coloca LF no arquivo
 	mov	dl, char_aux
 	add	col4, dl	;Adiciona esse valor no somatorio da coluna 4
-	mov	ult_col,3		
+	mov	ult_col,4		
 Continua4_1:
 	cmp	conta_4,03d	;Se for o caracter multiplo de 4...
 	jnz	Continua4_2	
 	mov	dl, char_aux
 	add	col3, dl	;Adiciona esse valor no somatorio da coluna 6
-	mov	ult_col,2
+	mov	ult_col,3
 	jmp	Continua5
 Continua4_2:
 	cmp	conta_4,02d	;Se for o caracter multiplo de 4...
 	jnz	Continua4_3	
 	mov	dl, char_aux
 	add	col2, dl	;Adiciona esse valor no somatorio da coluna 2
-	mov	ult_col,1
+	mov	ult_col,2
 	jmp	Continua5
 Continua4_3:
 	cmp	conta_4,01d	;Se for o caracter multiplo de 4...
 	jnz	Continua5	
 	mov	dl, char_aux
 	add	col1, dl	;Adiciona esse valor no somatorio da coluna 1
-	mov	ult_col,0
+	mov	ult_col,1
 Continua5:
 	mov	AH, flags_aux
 	sahf
@@ -189,12 +189,9 @@ Continua5:
 	;} while(1);
 		
 TerminouArquivo:
-	mov	dl, ult_col
-	mov	conta_4, dl
-	inc	conta_4
-	cmp	conta_4,04d	;Se for o caracter multiplo de 4...
-	jnz	Continua6_0	
-	mov	conta_4,0d	;Zera o contador
+	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+	jne	Continua6_0	
+	mov	ult_col,01d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
 	call	setChar		;Coloca CR no arquivo
@@ -202,6 +199,9 @@ TerminouArquivo:
 	mov	bx,FileHandleDst
 	call	setChar		;Coloca LF no arquivo
 Continua6_0:
+	mov		dl,'0'	;Printa 0 antes de cada nibble
+	mov		bx,FileHandleDst
+	call		setChar
 	mov 	dl, col1
 		and		dl, UN	;Colocar o upper nibble em baixo
 		SHR		dl,1
@@ -215,6 +215,9 @@ Continua6_1:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl,'0'	;Printa 0 antes de cada nibble
+		mov		bx,FileHandleDst
+		call		setChar
 		mov		dl, col1;Insere novamente td o valor em dl
 		and		dl, LN	;Limpa o upper nibble
 		cmp		dl, 10d	;Checa se o nibble eh A-F
@@ -226,9 +229,9 @@ Continua6_2:
 		mov		bx,FileHandleDst
 		call	setChar
 
-	inc	conta_4
-	cmp	conta_4,04d	;Se for o caracter multiplo de 4...
-	jnz	Continua6_2_0	
+	inc	ult_col
+	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+	jne	Continua6_2_0	
 	mov	conta_4,0d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
@@ -237,6 +240,9 @@ Continua6_2:
 	mov	bx,FileHandleDst
 	call	setChar		;Coloca LF no arquivo
 Continua6_2_0:
+	mov		dl,'0'	;Printa 0 antes de cada nibble
+	mov		bx,FileHandleDst
+	call		setChar
 	mov 	dl, col2
 		and		dl, UN	;Colocar o upper nibble em baixo
 		SHR		dl,1
@@ -250,6 +256,9 @@ Continua6_3:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl,'0'	;Printa 0 antes de cada nibble
+		mov		bx,FileHandleDst
+		call		setChar
 		mov		dl, col2;Insere novamente td o valor em dl
 		and		dl, LN	;Limpa o upper nibble
 		cmp		dl, 10d	;Checa se o nibble eh A-F
@@ -261,9 +270,9 @@ Continua6_4:
 		mov		bx,FileHandleDst
 		call	setChar
 
-	inc	conta_4
-	cmp	conta_4,04d	;Se for o caracter multiplo de 4...
-	jnz	Continua6_4_0	
+	inc	ult_col
+	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+	jne	Continua6_4_0	
 	mov	conta_4,0d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
@@ -272,6 +281,9 @@ Continua6_4:
 	mov	bx,FileHandleDst
 	call	setChar		;Coloca LF no arquivo
 Continua6_4_0:
+	mov		dl,'0'	;Printa 0 antes de cada nibble
+	mov		bx,FileHandleDst
+	call		setChar
 	mov 	dl, col3
 		and		dl, UN	;Colocar o upper nibble em baixo
 		SHR		dl,1
@@ -285,6 +297,9 @@ Continua6_5:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl,'0'	;Printa 0 antes de cada nibble
+		mov		bx,FileHandleDst
+		call		setChar
 		mov		dl, col3;Insere novamente td o valor em dl
 		and		dl, LN	;Limpa o upper nibble
 		cmp		dl, 10d	;Checa se o nibble eh A-F
@@ -296,17 +311,13 @@ Continua6_6:
 		mov		bx,FileHandleDst
 		call	setChar
 
-	inc	conta_4
-	cmp	conta_4,04d	;Se for o caracter multiplo de 4...
-	jnz	Continua6_6_0	
-	mov	conta_4,0d	;Zera o contador
-	mov	dl,0Dh
-	mov	bx,FileHandleDst	
-	call	setChar		;Coloca CR no arquivo
-	mov	dl,0Ah
-	mov	bx,FileHandleDst
-	call	setChar		;Coloca LF no arquivo
+	inc	ult_col
+	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+	jne	Continua6_6_0	
 Continua6_6_0:
+	mov		dl,'0'	;Printa 0 antes de cada nibble
+	mov		bx,FileHandleDst
+	call		setChar
 	mov 	dl, col4
 		and		dl, UN	;Colocar o upper nibble em baixo
 		SHR		dl,1
@@ -318,6 +329,9 @@ Continua6_6_0:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_7:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		bx,FileHandleDst
+		call		setChar
+		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
 		mov		dl, col4;Insere novamente td o valor em dl
