@@ -27,7 +27,10 @@ MsgErroOpenFile		db	"Erro na abertura do arquivo.", CR, LF, 0
 MsgErroCreateFile	db	"Erro na criacao do arquivo.", CR, LF, 0
 MsgErroReadFile		db	"Erro na leitura do arquivo.", CR, LF, 0
 MsgErroWriteFile	db	"Erro na escrita do arquivo.", CR, LF, 0
+MsgBytes		db	"Bytes: ", 0
+MsgSoma			db	"Soma: ", 0
 MsgCRLF			db	CR, LF, 0
+MsgSpc			db	" ", 0
 char_aux		db	0	;caracter menos significativo
 conta_4			db	0	
 ult_col			db	0
@@ -36,6 +39,8 @@ col2			db	0
 col3			db	0
 col4			db	0
 flags_aux		db	0
+conta_byte		db	0
+buff_dl			db	0
 
 
 MAXSTRING	equ		200
@@ -111,6 +116,7 @@ Continua3:
 	cmp		dl,7Eh
 	ja		Continua4
 Continua3_1:
+	inc		conta_byte
 	mov		char_aux, dl
 	and		dl, UN	;Colocar o upper nibble em baixo
 	SHR		dl,1
@@ -190,6 +196,31 @@ Continua5:
 	;} while(1);
 		
 TerminouArquivo:
+	;Printa o contador de bytes na tela
+	lea		bx, MsgBytes
+	call		printf_s	
+	mov		dl, conta_byte
+	and		dl, UN	;Colocar o upper nibble em baixo
+	SHR		dl,1
+	SHR		dl,1
+	SHR		dl,1
+	SHR		dl,1
+	add		dl, 30h	;Se for um numero de 0-9, soma so 30
+	mov 		ah,2
+	int		21h
+	mov		dl, conta_byte ;Insere novamente td o valor em dl
+	and		dl, LN	;Limpa o upper nibble
+	add		dl, 30h	;Se for um numero de 0-9, soma so 30
+	mov 		ah,2
+	int		21h
+	lea		bx, MsgCRLF
+	call	printf_s
+	
+	;Printa o valor da soma
+	lea		bx, MsgSoma
+	call	printf_s
+	
+
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
 	jne	Continua6_0	
 	mov	ult_col,01d	;Zera o contador
@@ -214,8 +245,12 @@ Continua6_0:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_1:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -227,8 +262,15 @@ Continua6_1:
 Continua6_2:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
 		;	if ( setChar(FileHandleDst, DL) == 0) continue;
+		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call	setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
+		lea		bx, MsgSpc
+		call	printf_s
+		
 
 	inc	ult_col
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
@@ -255,8 +297,12 @@ Continua6_2_0:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_3:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -267,9 +313,15 @@ Continua6_3:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_4:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		;	if ( setChar(FileHandleDst, DL) == 0) continue;
 		mov		bx,FileHandleDst
 		call	setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
+		lea		bx, MsgSpc
+		call	printf_s
 
 	inc	ult_col
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
@@ -296,8 +348,12 @@ Continua6_4_0:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_5:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -308,9 +364,15 @@ Continua6_5:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_6:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		;	if ( setChar(FileHandleDst, DL) == 0) continue;
 		mov		bx,FileHandleDst
 		call	setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
+		lea		bx, MsgSpc
+		call	printf_s
 
 	inc	ult_col
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
@@ -330,8 +392,12 @@ Continua6_6_0:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_7:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call		setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -342,9 +408,13 @@ Continua6_7:
 		add		dl, 7h	;Se for, soma 7h p pegar o codigo ascii correspondente
 Continua6_8:
 		add		dl, 30h	;Se for um numero de 0-9, soma so 30
+		mov		buff_dl, dl
 		;	if ( setChar(FileHandleDst, DL) == 0) continue;
 		mov		bx,FileHandleDst
 		call	setChar
+		mov		dl, buff_dl
+		mov 		ah,2
+		int		21h
 
 
 
