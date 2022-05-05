@@ -17,6 +17,7 @@ LN		equ		0Fh
 FileNameSrc		db		256 dup (?)		; Nome do arquivo a ser lido
 FileNameDst		db		256 dup (?)		; Nome do arquivo a ser escrito
 FileHandleSrc	dw		0				; Handler do arquivo origem
+FHSrcNoEx	dw		0				; Handler do arquivo origem sem extensao
 FileHandleDst	dw		0				; Handler do arquivo destino
 FileBuffer		db		10 dup (?)		; Buffer de leitura/escrita do arquivo
 
@@ -378,21 +379,32 @@ GetFileNameSrc	endp
 
 
 ;--------------------------------------------------------------------
-;Funcao Pede o nome do arquivo de destino salva-o em FileNameDst
+;Monta o nome do arquivo de saida a partir da entrada e add .res no fim
 ;--------------------------------------------------------------------
 GetFileNameDst	proc	near
-	;printf("Nome do arquivo destino: ");
-	lea		bx, MsgPedeArquivoDst
-	call	printf_s
-	
-	;gets(FileNameDst);
+
 	lea		bx, FileNameDst
-	call	gets
-	
-	;printf("\r\n")
-	lea		bx, MsgCRLF
-	call	printf_s
-	
+
+	;Pega nome do arquivo s extensao
+	lea si, FileNameSrc
+	lea di, FileNameDst
+	cpy_nxt:
+		mov bl,[si]
+		cmp bl,'.' ;Add teste de caracter de fim de str
+		je fim_string
+		mov [di],bl
+		inc si
+		inc di
+		jmp cpy_nxt
+	fim_string:	;Encontro o ponto, add .res no nome
+		mov	byte ptr es:[di],'.'
+		inc	di
+		mov	byte ptr es:[di],'r'
+		inc	di
+		mov	byte ptr es:[di],'e'
+		inc	di
+		mov	byte ptr es:[di],'s'
+		inc	di	
 	ret
 GetFileNameDst	endp
 
@@ -400,7 +412,7 @@ GetFileNameDst	endp
 ;Função	Abre o arquivo cujo nome está no string apontado por DX
 ;		boolean fopen(char *FileName -> DX)
 ;Entra: DX -> ponteiro para o string com o nome do arquivo
-;Sai:   BX -> handle do arquivo
+;Sai:   BX -> handle do arq uivo
 ;       CF -> 0, se OK
 ;--------------------------------------------------------------------
 fopen	proc	near
