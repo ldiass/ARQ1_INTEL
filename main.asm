@@ -31,6 +31,7 @@ MsgBytes		db	"Bytes: ", 0
 MsgSoma			db	"Soma: ", 0
 MsgCRLF			db	CR, LF, 0
 MsgSpc			db	" ", 0
+MsgTest			db	" This is a test ", 0
 char_aux		db	0	;caracter menos significativo
 conta_4			db	0	
 ult_col			db	0
@@ -221,9 +222,9 @@ TerminouArquivo:
 	call	printf_s
 	
 
-	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+	cmp	ult_col	,4d	;Se for o caracter multiplo de 4...
 	jne	Continua6_0	
-	mov	ult_col,01d	;Zera o contador
+	mov	ult_col,00d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
 	call	setChar		;Coloca CR no arquivo
@@ -251,6 +252,17 @@ Continua6_1:
 		mov		dl, buff_dl
 		mov 		ah,2
 		int		21h
+			inc 	ult_col
+			cmp	ult_col	,4d	;Se for o caracter multiplo de 4...
+			jne	Continua6_1_1	
+			mov	ult_col,00d	;Zera o contador
+			mov	dl,0Dh
+			mov	bx,FileHandleDst	
+			call	setChar		;Coloca CR no arquivo
+			mov	dl,0Ah
+			mov	bx,FileHandleDst
+			call	setChar		;Coloca LF no arquivo
+Continua6_1_1:
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -272,10 +284,11 @@ Continua6_2:
 		call	printf_s
 		
 
-	inc	ult_col
+
+	inc	ult_col	
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
 	jne	Continua6_2_0	
-	mov	conta_4,0d	;Zera o contador
+	mov	ult_col	,0d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
 	call	setChar		;Coloca CR no arquivo
@@ -300,6 +313,18 @@ Continua6_3:
 		mov		buff_dl, dl
 		mov		bx,FileHandleDst
 		call		setChar
+
+			inc ult_col
+			cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
+			jne	Continua6_3_1	
+			mov	ult_col,0d	;Zera o contador
+			mov	dl,0Dh
+			mov	bx,FileHandleDst	
+			call	setChar		;Coloca CR no arquivo
+			mov	dl,0Ah
+			mov	bx,FileHandleDst
+			call	setChar		;Coloca LF no arquivo
+Continua6_3_1:
 		mov		dl, buff_dl
 		mov 		ah,2
 		int		21h
@@ -323,10 +348,13 @@ Continua6_4:
 		lea		bx, MsgSpc
 		call	printf_s
 
+
+
+
 	inc	ult_col
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
 	jne	Continua6_4_0	
-	mov	conta_4,0d	;Zera o contador
+	mov	ult_col	,0d	;Zera o contador
 	mov	dl,0Dh
 	mov	bx,FileHandleDst	
 	call	setChar		;Coloca CR no arquivo
@@ -354,6 +382,18 @@ Continua6_5:
 		mov		dl, buff_dl
 		mov 		ah,2
 		int		21h
+
+			inc ult_col
+			cmp	ult_col	,4d	;Se for o caracter multiplo de 4...
+			jne	Continua6_5_1	
+			mov	ult_col,00d	;Zera o contador
+			mov	dl,0Dh
+			mov	bx,FileHandleDst	
+			call	setChar		;Coloca CR no arquivo
+			mov	dl,0Ah
+			mov	bx,FileHandleDst
+			call	setChar		;Coloca LF no arquivo
+Continua6_5_1:
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -376,8 +416,16 @@ Continua6_6:
 
 	inc	ult_col
 	cmp	ult_col	,04h	;Se for o caracter multiplo de 4...
-	jne	Continua6_6_0	
+	jne	Continua6_6_0
+	mov	ult_col,00d	;Zera o contador
+	mov	dl,0Dh
+	mov	bx,FileHandleDst	
+	call	setChar		;Coloca CR no arquivo
+	mov	dl,0Ah
+	mov	bx,FileHandleDst
+	call	setChar		;Coloca LF no arquivo
 Continua6_6_0:
+
 	mov		dl,'0'	;Printa 0 antes de cada nibble
 	mov		bx,FileHandleDst
 	call		setChar
@@ -398,6 +446,18 @@ Continua6_7:
 		mov		dl, buff_dl
 		mov 		ah,2
 		int		21h
+			inc ult_col
+			cmp	ult_col	,4d	;Se for o caracter multiplo de 4...
+			jne	Continua6_7_1	
+			mov	ult_col,00d	;Zera o contador
+			mov	dl,0Dh
+			mov	bx,FileHandleDst	
+			call	setChar		;Coloca CR no arquivo
+			mov	dl,0Ah
+			mov	bx,FileHandleDst
+			call	setChar		;Coloca LF no arquivo
+Continua6_7_1:
+
 		mov		dl,'0'	;Printa 0 antes de cada nibble
 		mov		bx,FileHandleDst
 		call		setChar
@@ -420,7 +480,7 @@ Continua6_8:
 
 	;fclose(FileHandleSrc)
 	;fclose(FileHandleDst)
-	;exit(0)
+	;exit(0) 
 	mov		bx,FileHandleSrc	; Fecha arquivo origem
 	call	fclose
 	mov		bx,FileHandleDst	; Fecha arquivo destino
